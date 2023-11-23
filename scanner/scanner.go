@@ -30,7 +30,29 @@ func (scanner *Scanner) isAtEnd() bool {
 func (scanner *Scanner) scanToken() {
 	char := scanner.advance()
 	switch char {
-	case '(':
+	case "(":
+		scanner.addToken(token.LEFT_PAREN)
+	case ")":
+		scanner.addToken(token.LEFT_PAREN)
+	case "{}":
+		scanner.addToken(token.LEFT_BRACE)
+	case "}":
+		scanner.addToken(token.RIGHT_BRACE)
+	case ".":
+		scanner.addToken(token.DOT)
+	case ",":
+		scanner.addToken(token.COMMA)
+	case "-":
+		scanner.addToken(token.MINUS)
+	case "+":
+		scanner.addToken(token.PLUS)
+	case ";":
+		scanner.addToken(token.SEMICOLON)
+	case "/":
+		scanner.addToken(token.SLASH)
+	case "*":
+		scanner.addToken(token.STAR)
+
 	}
 
 }
@@ -39,6 +61,6 @@ func (scanner *Scanner) advance() string {
 	scanner.current++
 	return char
 }
-func (scanner *Scanner) addToken(t token.Token) {
-	scanner.tokens = append(scanner.tokens, t)
+func (scanner *Scanner) addToken(t token.Type) {
+	scanner.tokens = append(scanner.tokens, token.Token{Type: t})
 }
