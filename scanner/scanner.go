@@ -1,6 +1,9 @@
 package scanner
 
-import "GoLox/token"
+import (
+	"GoLox/parseError"
+	"GoLox/token"
+)
 
 type Scanner struct {
 	source  string
@@ -52,6 +55,8 @@ func (scanner *Scanner) scanToken() {
 		scanner.addToken(token.SLASH)
 	case "*":
 		scanner.addToken(token.STAR)
+	default:
+		parseError.RaiseError(scanner.line, "Unexpected character.")
 
 	}
 
@@ -61,6 +66,10 @@ func (scanner *Scanner) advance() string {
 	scanner.current++
 	return char
 }
-func (scanner *Scanner) addToken(t token.Type) {
-	scanner.tokens = append(scanner.tokens, token.Token{Type: t})
+func (scanner *Scanner) addToken(tp token.Type) {
+	scanner.addTokenWithLiteral(tp, nil)
+}
+func (scanner *Scanner) addTokenWithLiteral(tp token.Type, literal interface{}) {
+	text := scanner.source[scanner.start:scanner.current]
+	scanner.tokens = append(scanner.tokens, token.Token{Type: tp, Lexeme: text, Literal: literal, Line: scanner.line})
 }
