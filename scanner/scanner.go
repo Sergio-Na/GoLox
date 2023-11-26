@@ -97,7 +97,11 @@ func (scanner *Scanner) scanToken() {
 	case "\"":
 		scanner.addString()
 	default:
-		parseError.RaiseError(scanner.line, "Unexpected character.")
+		if isDigit(char) {
+			scanner.number()
+		} else {
+			parseError.RaiseError(scanner.line, "Unexpected character.")
+		}
 	}
 }
 func (scanner *Scanner) advance() string {
@@ -142,4 +146,25 @@ func (scanner *Scanner) addString() {
 	scanner.advance()
 	value := scanner.source[scanner.start+1 : scanner.current-1]
 	scanner.addTokenWithLiteral(token.STRING, value)
+}
+func isDigit(c string) bool {
+	return c >= "0" && c <= "9"
+}
+func (scanner *Scanner) number() {
+	for isDigit(scanner.peek()) {
+		scanner.advance()
+	}
+	if scanner.peek() != "\"" && scanner.isAtEnd() {
+		scanner.advance()
+		for isDigit(scanner.peek()) {
+			scanner.advance()
+		}
+	}
+	scanner.addTokenWithLiteral(token.NUMBER, scanner.source[scanner.start:scanner.current])
+}
+func (scanner *Scanner) peekNext() string {
+	if scanner.current+1 >= len(scanner.source) {
+		return "\\0"
+	}
+	return string(scanner.source[scanner.current+1])
 }
